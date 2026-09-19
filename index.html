@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Context window</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <article class="card" id="app" aria-label="Context window dashboard">
+      <header class="top">
+        <div class="top-left">
+          <div class="title-row">
+            <span class="logo" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7.25" stroke="#5B8DEF" stroke-width="1.5"/>
+                <circle cx="9" cy="9" r="2.5" fill="#5B8DEF"/>
+              </svg>
+            </span>
+            <h1>Context window</h1>
+            <span class="pct" id="pctLabel">95% full</span>
+          </div>
+          <h2 class="headline" id="headline">Over half of this window is work that already landed</h2>
+        </div>
+        <div class="top-right">
+          <div class="stat">
+            <div class="stat-label">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <rect x="2" y="3" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M5 3V2.5a2 2 0 0 1 4 0V3" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+              Carried
+            </div>
+            <div class="stat-value" id="carriedValue">190,121</div>
+            <div class="stat-sub">of <span id="capacityValue">200,000</span></div>
+          </div>
+          <div class="stat stat-room">
+            <div class="stat-label">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.2"/>
+                <circle cx="7" cy="7" r="1.6" fill="currentColor"/>
+              </svg>
+              Room left
+            </div>
+            <div class="stat-value" id="roomValue">1,687</div>
+            <div class="stat-sub accent">for the next message</div>
+          </div>
+        </div>
+      </header>
+
+      <section class="bar-section" aria-label="Token bar">
+        <div class="legend-row">
+          <div class="legend">
+            <span class="leg"><i class="swatch inplay"></i>In play</span>
+            <span class="leg"><i class="swatch landed"></i>Already landed</span>
+            <span class="leg"><i class="swatch free"></i>Free</span>
+            <span class="leg"><i class="swatch held"></i>Held for the reply · <span id="heldLabel">8,192</span></span>
+          </div>
+          <div class="slab-meta" id="slabMeta">17 slabs · 104,108 reclaimable</div>
+        </div>
+        <div class="bar-wrap">
+          <div class="hover-tip" id="hoverTip" hidden></div>
+          <div class="bar" id="bar" role="img" aria-label="Context window segmented bar"></div>
+        </div>
+        <div class="scale" aria-hidden="true">
+          <span>0</span><span>50,000</span><span>100,000</span><span>150,000</span><span>200,000</span>
+        </div>
+      </section>
+
+      <section class="grid" id="breakdown" aria-label="Breakdown"></section>
+
+      <footer class="footer">
+        <p class="caption" id="caption">Every copy was worth reading once, and is charged again on every turn since</p>
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" id="btnReset" title="Reset (R)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M2.5 7a4.5 4.5 0 1 0 1.3-3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              <path d="M2.2 2.8v2.6h2.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Reset
+          </button>
+          <button type="button" class="btn btn-primary" id="btnReclaim" title="Reclaim (Enter / Space)">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.5v11M1.5 7h11M3.2 3.2l7.6 7.6M10.8 3.2l-7.6 7.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span id="reclaimLabel">Reclaim 104,108</span>
+          </button>
+        </div>
+      </footer>
+    </article>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
