@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="htmlRoot">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,6 +11,9 @@
 </head>
 <body>
   <div class="page">
+    <div class="lang-bar">
+      <button type="button" class="lang-toggle" id="btnLang" title="Switch language" aria-label="Switch language">中文</button>
+    </div>
     <article class="card" id="app" aria-label="Context window dashboard">
       <header class="top">
         <div class="top-left">
@@ -21,7 +24,7 @@
                 <circle cx="9" cy="9" r="2.5" fill="#5B8DEF"/>
               </svg>
             </span>
-            <h1>Context window</h1>
+            <h1 id="titleText">Context window</h1>
             <span class="pct" id="pctLabel">95% full</span>
           </div>
           <h2 class="headline" id="headline">Over half of this window is work that already landed</h2>
@@ -33,10 +36,10 @@
                 <rect x="2" y="3" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
                 <path d="M5 3V2.5a2 2 0 0 1 4 0V3" stroke="currentColor" stroke-width="1.2"/>
               </svg>
-              Carried
+              <span id="labelCarried">Carried</span>
             </div>
             <div class="stat-value" id="carriedValue">190,121</div>
-            <div class="stat-sub">of <span id="capacityValue">200,000</span></div>
+            <div class="stat-sub"><span id="labelOf">of</span> <span id="capacityValue">200,000</span></div>
           </div>
           <div class="stat stat-room">
             <div class="stat-label">
@@ -44,10 +47,10 @@
                 <circle cx="7" cy="7" r="5.25" stroke="currentColor" stroke-width="1.2"/>
                 <circle cx="7" cy="7" r="1.6" fill="currentColor"/>
               </svg>
-              Room left
+              <span id="labelRoom">Room left</span>
             </div>
             <div class="stat-value" id="roomValue">1,687</div>
-            <div class="stat-sub accent">for the next message</div>
+            <div class="stat-sub accent" id="labelRoomSub">for the next message</div>
           </div>
         </div>
       </header>
@@ -55,10 +58,10 @@
       <section class="bar-section" aria-label="Token bar">
         <div class="legend-row">
           <div class="legend">
-            <span class="leg"><i class="swatch inplay"></i>In play</span>
-            <span class="leg"><i class="swatch landed"></i>Already landed</span>
-            <span class="leg"><i class="swatch free"></i>Free</span>
-            <span class="leg"><i class="swatch held"></i>Held for the reply · <span id="heldLabel">8,192</span></span>
+            <span class="leg"><i class="swatch inplay"></i><span id="legInplay">In play</span></span>
+            <span class="leg"><i class="swatch landed"></i><span id="legLanded">Already landed</span></span>
+            <span class="leg"><i class="swatch free"></i><span id="legFree">Free</span></span>
+            <span class="leg"><i class="swatch held"></i><span id="legHeld">Held for the reply</span> · <span id="heldLabel">8,192</span></span>
           </div>
           <div class="slab-meta" id="slabMeta">17 slabs · 104,108 reclaimable</div>
         </div>
@@ -81,7 +84,7 @@
               <path d="M2.5 7a4.5 4.5 0 1 0 1.3-3.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
               <path d="M2.2 2.8v2.6h2.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            Reset
+            <span id="labelReset">Reset</span>
           </button>
           <button type="button" class="btn btn-primary" id="btnReclaim" title="Reclaim (Enter / Space)">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">

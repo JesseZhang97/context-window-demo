@@ -4,12 +4,169 @@
   const CAPACITY = 200_000;
   const HELD = 8_192;
 
+  let lang = localStorage.getItem("cw-lang") === "zh" ? "zh" : "en";
+
+  const I18N = {
+    en: {
+      title: "Context window",
+      pctFull: (n) => `${n}% full`,
+      headline: "Over half of this window is work that already landed",
+      doneHeadline: "Every token left in here is work still in play",
+      caption: "Every copy was worth reading once, and is charged again on every turn since",
+      doneCaption: "Superseded copies, unread tool output, and old turns collapsed to summaries",
+      carried: "Carried",
+      of: "of",
+      room: "Room left",
+      roomSub: "for the next message",
+      inplay: "In play",
+      landed: "Already landed",
+      free: "Free",
+      held: "Held for the reply",
+      ofWindow: (pct) => `${pct}% of the window`,
+      slabMeta: (slabs, rec) => `${slabs} slabs · ${rec} reclaimable`,
+      reclaim: (n) => `Reclaim ${n}`,
+      reclaimZero: "Reclaim 0",
+      reclaimed: "Reclaimed",
+      reset: "Reset",
+      toggle: "中文",
+      tipRec: (name, cur, rec) => `${name} · ${cur} tokens · ${rec} of it reclaimable`,
+      tipPlain: (name, cur) => `${name} · ${cur} tokens`,
+      freeTip: (n) => `Free · ${n} tokens`,
+      heldTip: (n) => `Held for the reply · ${n} tokens`,
+      dropped: "dropped",
+      summarised: "summarised",
+      sections: {
+        preamble: { title: "Preamble", hint: "Cannot go" },
+        files: { title: "Files read", hint: "Drop superseded copies" },
+        toolsOut: { title: "Tool output", hint: "Drop what nothing read" },
+        convo: { title: "Conversation", hint: "Collapse to a summary" },
+      },
+      items: {
+        sys: { name: "System prompt", desc: "one file, sent every turn" },
+        tools: { name: "Tool schemas", desc: "14 tools, whether called or not" },
+        proj: { name: "Project instructions", desc: "AGENTS.md and two nested" },
+        mem: { name: "Recalled memory", desc: "8 of 23 files matched" },
+        machine: { name: "machine.ts", desc: "effort-warning · read 4 times, once per edit" },
+        globals: { name: "globals.css", desc: "app · read twice, 25 kB each time" },
+        card: { name: "card.tsx", desc: "effort-warning · read 3 times, 2 superseded" },
+        slider: { name: "slider.tsx", desc: "effort-warning · read twice over the pointer fix" },
+        five: { name: "Five more files", desc: "flame, roll, swarm, svg, run — once each" },
+        npm: { name: "npm run build", desc: "3 runs, the 2 failures long since fixed" },
+        grep: { name: "grep -rn effort src", desc: "312 matches, 3 of them were read" },
+        shots: { name: "Screenshots of the card", desc: "3 images at 1,540 each, 2 now out of date" },
+        devlog: { name: "Dev server log", desc: "2 tails, neither had the error in it" },
+        t1: { name: "Turns 1 – 9", desc: "the heat model, shipped" },
+        t2: { name: "Turns 10 – 21", desc: "pointer capture on the slider, fixed" },
+        t3: { name: "Turns 22 – 34", desc: "the swarm and the flame, still open" },
+        t4: { name: "Turns 35 – 38", desc: "the warning card, in progress" },
+      },
+    },
+    zh: {
+      title: "上下文窗口",
+      pctFull: (n) => `${n}% 已满`,
+      headline: "超过一半的窗口，是已经落地的工作",
+      doneHeadline: "剩下的每个 token，都还在进行中",
+      caption: "每一份拷贝都值得读一次，但之后每一轮都会再计费",
+      doneCaption: "过时副本、未读工具输出、旧轮次已收成摘要",
+      carried: "已占用",
+      of: "/",
+      room: "剩余空间",
+      roomSub: "留给下一条消息",
+      inplay: "进行中",
+      landed: "已落地",
+      free: "空闲",
+      held: "为回复预留",
+      ofWindow: (pct) => `占窗口 ${pct}%`,
+      slabMeta: (slabs, rec) => `${slabs} 个片段 · 可回收 ${rec}`,
+      reclaim: (n) => `回收 ${n}`,
+      reclaimZero: "回收 0",
+      reclaimed: "已回收",
+      reset: "重置",
+      toggle: "EN",
+      tipRec: (name, cur, rec) => `${name} · ${cur} token · 其中可回收 ${rec}`,
+      tipPlain: (name, cur) => `${name} · ${cur} token`,
+      freeTip: (n) => `空闲 · ${n} token`,
+      heldTip: (n) => `为回复预留 · ${n} token`,
+      dropped: "已丢弃",
+      summarised: "已摘要",
+      sections: {
+        preamble: { title: "前导上下文", hint: "无法剔除" },
+        files: { title: "已读文件", hint: "丢掉被覆盖的副本" },
+        toolsOut: { title: "工具输出", hint: "丢掉未读过的输出" },
+        convo: { title: "对话", hint: "收成摘要" },
+      },
+      items: {
+        sys: { name: "系统提示", desc: "一个文件，每轮都会发送" },
+        tools: { name: "工具 Schema", desc: "14 个工具，无论是否调用" },
+        proj: { name: "项目说明", desc: "AGENTS.md 与两个嵌套文件" },
+        mem: { name: "召回记忆", desc: "23 个文件中匹配到 8 个" },
+        machine: { name: "machine.ts", desc: "effort-warning · 读了 4 次，每次编辑一次" },
+        globals: { name: "globals.css", desc: "app · 读了两次，每次约 25 kB" },
+        card: { name: "card.tsx", desc: "effort-warning · 读了 3 次，2 份已过时" },
+        slider: { name: "slider.tsx", desc: "effort-warning · 指针修复期间读了两次" },
+        five: { name: "另外五个文件", desc: "flame、roll、swarm、svg、run — 各一次" },
+        npm: { name: "npm run build", desc: "跑了 3 次，2 次失败早已修好" },
+        grep: { name: "grep -rn effort src", desc: "312 条匹配，只读了 3 条" },
+        shots: { name: "卡片截图", desc: "3 张图各 1,540，2 张已过时" },
+        devlog: { name: "开发服务器日志", desc: "2 段尾部，都没找到报错" },
+        t1: { name: "第 1 – 9 轮", desc: "热力模型，已交付" },
+        t2: { name: "第 10 – 21 轮", desc: "滑块指针捕获，已修好" },
+        t3: { name: "第 22 – 34 轮", desc: "swarm 与 flame，仍在进行" },
+        t4: { name: "第 35 – 38 轮", desc: "警告卡片，进行中" },
+      },
+    },
+  };
+
+  function L() {
+    return I18N[lang];
+  }
+
+  function itemCopy(id) {
+    return L().items[id] || { name: id, desc: "" };
+  }
+
+  function sectionCopy(id) {
+    return L().sections[id] || { title: id, hint: "" };
+  }
+
+  function statusLabel(status) {
+    if (status === "dropped") return L().dropped;
+    if (status === "summarised") return L().summarised;
+    return status || "";
+  }
+
+  function applyChrome() {
+    const t = L();
+    document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+    document.title = t.title;
+    const set = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+    set("titleText", t.title);
+    set("labelCarried", t.carried);
+    set("labelOf", t.of);
+    set("labelRoom", t.room);
+    set("labelRoomSub", t.roomSub);
+    set("legInplay", t.inplay);
+    set("legLanded", t.landed);
+    set("legFree", t.free);
+    set("legHeld", t.held);
+    set("labelReset", t.reset);
+    const btn = document.getElementById("btnLang");
+    if (btn) btn.textContent = t.toggle;
+  }
+
+  function setLang(next) {
+    lang = next === "zh" ? "zh" : "en";
+    localStorage.setItem("cw-lang", lang);
+    applyChrome();
+    render();
+  }
+
+
   /** Initial dataset matching the source video frames */
   const INITIAL = {
-    headline: "Over half of this window is work that already landed",
-    caption: "Every copy was worth reading once, and is charged again on every turn since",
-    doneHeadline: "Every token left in here is work still in play",
-    doneCaption: "Superseded copies, unread tool output, and old turns collapsed to summaries",
     sections: [
       {
         id: "preamble",
@@ -78,8 +235,6 @@
 
   function cloneState() {
     return {
-      headline: INITIAL.headline,
-      caption: INITIAL.caption,
       animating: false,
       done: false,
       hoverId: null,
@@ -156,7 +311,8 @@
       el.dataset.id = id;
       el.style.flexGrow = String(it.current);
       el.style.flexBasis = "0";
-      el.title = `${it.name} · ${fmt(it.current)} tokens`;
+      const copy = itemCopy(id);
+      el.title = L().tipPlain(copy.name, fmt(it.current));
 
       if (state.hoverId === id) el.classList.add("highlight");
 
@@ -177,7 +333,7 @@
       el.dataset.id = "__free";
       el.style.flexGrow = String(free);
       el.style.flexBasis = "0";
-      el.title = `Free · ${fmt(free)} tokens`;
+      el.title = L().freeTip(fmt(free));
       frag.appendChild(el);
     }
 
@@ -187,7 +343,7 @@
     held.dataset.id = "__held";
     held.style.flexGrow = String(HELD);
     held.style.flexBasis = "0";
-    held.title = `Held for the reply · ${fmt(HELD)} tokens`;
+    held.title = L().heldTip(fmt(HELD));
     frag.appendChild(held);
 
     bar.replaceChildren(frag);
@@ -203,9 +359,10 @@
         tip.style.left = `${slabRect.left + slabRect.width / 2}px`;
         tip.style.top = `${slabRect.top}px`;
         const rec = it.status ? 0 : it.reclaimLeft;
+        const copy = itemCopy(state.hoverId);
         tip.textContent = rec
-          ? `${it.name} · ${fmt(it.current)} tokens · ${fmt(rec)} of it reclaimable`
-          : `${it.name} · ${fmt(it.current)} tokens`;
+          ? L().tipRec(copy.name, fmt(it.current), fmt(rec))
+          : L().tipPlain(copy.name, fmt(it.current));
       } else {
         tip.classList.remove("visible");
         tip.hidden = true;
@@ -230,15 +387,16 @@
       section.className = "section";
       section.dataset.section = sec.id;
 
+      const sc = sectionCopy(sec.id);
       section.innerHTML = `
         <div class="section-head">
           <div class="section-title">
             <span class="section-icon" aria-hidden="true"><span></span><span></span></span>
-            ${sec.title}
+            ${sc.title}
           </div>
           <div class="section-total">${fmt(total)}</div>
         </div>
-        <p class="section-hint">${sec.hint} · ${pct}% of the window</p>
+        <p class="section-hint">${sc.hint} · ${L().ofWindow(pct)}</p>
       `;
 
       sec.items.forEach((def) => {
@@ -259,14 +417,15 @@
                 <circle cx="6" cy="6" r="5.25" stroke="currentColor" stroke-width="1.2"/>
                 <path d="M3.5 6.2l1.7 1.7 3.3-3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              ${it.status}
+              ${statusLabel(it.status)}
             </div>`
           : `<div class="row-status"></div>`;
 
+        const ic = itemCopy(it.id);
         row.innerHTML = `
           <div class="row-main">
-            <div class="row-name">${it.name}</div>
-            <div class="row-desc">${it.desc}</div>
+            <div class="row-name">${ic.name}</div>
+            <div class="row-desc">${ic.desc}</div>
           </div>
           <div class="row-nums">
             <div class="row-tokens">${fmt(it.current)}</div>
@@ -305,20 +464,20 @@
     $("#carriedValue").textContent = fmt(c);
     $("#capacityValue").textContent = fmt(CAPACITY);
     $("#roomValue").textContent = fmt(room);
-    $("#pctLabel").textContent = `${pct}% full`;
-    $("#slabMeta").textContent = `${slabCount()} slabs · ${fmt(rec)} reclaimable`;
+    $("#pctLabel").textContent = L().pctFull(pct);
+    $("#slabMeta").textContent = L().slabMeta(slabCount(), fmt(rec));
     $("#heldLabel").textContent = fmt(HELD);
-    $("#headline").textContent = state.done ? INITIAL.doneHeadline : state.headline;
-    $("#caption").textContent = state.done ? INITIAL.doneCaption : state.caption;
+    $("#headline").textContent = state.done ? L().doneHeadline : L().headline;
+    $("#caption").textContent = state.done ? L().doneCaption : L().caption;
 
     const btn = $("#btnReclaim");
     const label = $("#reclaimLabel");
     if (state.done || rec === 0) {
-      label.textContent = state.done ? "Reclaimed" : "Reclaim 0";
+      label.textContent = state.done ? L().reclaimed : L().reclaimZero;
       btn.classList.toggle("done", state.done);
       btn.disabled = state.animating || rec === 0;
     } else {
-      label.textContent = `Reclaim ${fmt(rec)}`;
+      label.textContent = L().reclaim(fmt(rec));
       btn.classList.remove("done");
       btn.disabled = state.animating;
     }
@@ -357,9 +516,10 @@
         tip.style.left = `${slabRect.left + slabRect.width / 2}px`;
         tip.style.top = `${slabRect.top}px`;
         const rec = it.status ? 0 : it.reclaimLeft;
+        const copy = itemCopy(id);
         tip.textContent = rec
-          ? `${it.name} · ${fmt(it.current)} tokens · ${fmt(rec)} of it reclaimable`
-          : `${it.name} · ${fmt(it.current)} tokens`;
+          ? L().tipRec(copy.name, fmt(it.current), fmt(rec))
+          : L().tipPlain(copy.name, fmt(it.current));
       }
     } else {
       tip.classList.remove("visible");
@@ -430,10 +590,10 @@
         // live header + bar flex
         $("#carriedValue").textContent = fmt(carried());
         $("#roomValue").textContent = fmt(roomLeft());
-        $("#pctLabel").textContent = `${pctFull()}% full`;
+        $("#pctLabel").textContent = L().pctFull(pctFull());
         const rem = fromRec - (fromTokens - v);
-        $("#slabMeta").textContent = `${slabCount()} slabs · ${fmt(Math.max(0, rem))} reclaimable`;
-        $("#reclaimLabel").textContent = `Reclaim ${fmt(Math.max(0, rem))}`;
+        $("#slabMeta").textContent = L().slabMeta(slabCount(), fmt(Math.max(0, rem)));
+        $("#reclaimLabel").textContent = L().reclaim(fmt(Math.max(0, rem)));
         if (slab) slab.style.flexGrow = String(Math.max(v, 0.01));
         const freeEl = $(`.slab[data-id="__free"]`);
         if (freeEl) freeEl.style.flexGrow = String(freeTokens());
@@ -446,7 +606,8 @@
           const hintEl = $(`.section[data-section="${sec.id}"] .section-hint`);
           if (hintEl) {
             const pct = Math.round((sectionTotal(sec.id) / CAPACITY) * 100);
-            hintEl.textContent = `${sec.hint} · ${pct}% of the window`;
+            const sc = sectionCopy(sec.id);
+            hintEl.textContent = `${sc.hint} · ${L().ofWindow(pct)}`;
           }
         }
       });
@@ -471,7 +632,7 @@
             <circle cx="6" cy="6" r="5.25" stroke="currentColor" stroke-width="1.2"/>
             <path d="M3.5 6.2l1.7 1.7 3.3-3.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          ${it.status}
+          ${statusLabel(it.status)}
         `;
         // force reflow then show
         void statusEl.offsetWidth;
@@ -511,7 +672,7 @@
 
     state.done = reclaimable() === 0;
     state.animating = false;
-    state.headline = INITIAL.doneHeadline;
+    // done flag drives L().doneHeadline in renderHeader
     // Snap exact final values
     allItems().forEach((it) => {
       if (it.status) {
@@ -532,6 +693,7 @@
   /* —— Wire up —— */
   $("#btnReclaim").addEventListener("click", reclaimAll);
   $("#btnReset").addEventListener("click", reset);
+  $("#btnLang").addEventListener("click", () => setLang(lang === "zh" ? "en" : "zh"));
 
   document.addEventListener("keydown", (e) => {
     if (e.target.matches("input, textarea, select")) return;
@@ -547,6 +709,7 @@
   });
 
   // Initial paint
+  applyChrome();
   render();
 
   // Screenshot / deep-link helpers: ?shot=after applies reclaim instantly
