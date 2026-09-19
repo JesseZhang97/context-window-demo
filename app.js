@@ -197,12 +197,11 @@
       const slab = bar.querySelector(`[data-id="${state.hoverId}"]`);
       const it = state.items[state.hoverId];
       if (slab && it) {
-        const barRect = bar.getBoundingClientRect();
         const slabRect = slab.getBoundingClientRect();
-        const left = slabRect.left - barRect.left + slabRect.width / 2;
         tip.hidden = false;
         tip.classList.add("visible");
-        tip.style.left = `${left}px`;
+        tip.style.left = `${slabRect.left + slabRect.width / 2}px`;
+        tip.style.top = `${slabRect.top}px`;
         const rec = it.status ? 0 : it.reclaimLeft;
         tip.textContent = rec
           ? `${it.name} · ${fmt(it.current)} tokens · ${fmt(rec)} of it reclaimable`
@@ -352,11 +351,11 @@
       const slab = bar.querySelector(`[data-id="${id}"]`);
       const it = state.items[id];
       if (slab) {
-        const barRect = bar.getBoundingClientRect();
         const slabRect = slab.getBoundingClientRect();
         tip.hidden = false;
         tip.classList.add("visible");
-        tip.style.left = `${slabRect.left - barRect.left + slabRect.width / 2}px`;
+        tip.style.left = `${slabRect.left + slabRect.width / 2}px`;
+        tip.style.top = `${slabRect.top}px`;
         const rec = it.status ? 0 : it.reclaimLeft;
         tip.textContent = rec
           ? `${it.name} · ${fmt(it.current)} tokens · ${fmt(rec)} of it reclaimable`
